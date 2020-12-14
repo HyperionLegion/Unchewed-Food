@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-	<title>UnchewedFood</title>
+	<title>Add Food</title>
 	<link href="/css/style.css" rel="stylesheet">
 	<link href="/bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
 	<script src="/bower_components/bootstrap/dist/js/bootstrap.js"></script>
@@ -16,11 +16,11 @@
 
 		  <div class="collapse navbar-collapse" id="navbarsExample04">
 		    <ul class="navbar-nav mr-auto">
-		      <li class="nav-item active">
+		      <li class="nav-item">
 		        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
 		      </li>
 		      <%if (typeof user!='undefined'){%>
-		      	<li class ="nav-item"><a class="nav-link" href="/users/fridge">Your Fridge</a></li>
+		      	<li class ="nav-item active"><a class="nav-link" href="/users/fridge">Your Fridge</a></li>
 		      <%}%>
 		  	</ul>
 		  	<ul class="navbar-nav navbar-right">
@@ -38,5 +38,19 @@
 		    </ul>
 		  </div>
 		</nav>
+		<div class="container">
+		<h1>Add New Food</h1>
+		<form method="POST", action="/users/fridge/add">
+			<div class="form-group">
+			<label for="food">Food:</label><br>
+			  <input type="text" id="food" name="food" placeholder="Hamburger"><br>
+			</div>
+			<div class="form-group">
+			  <label for="expiration">Expiration:</label><br>
+			  <input type="date" id="expiration" name="expiration"><br><br>
+			</div>
+			  <input type="submit" value="Submit" class="btn btn-success">
+		</form>
+		</div>
 </body>
 </html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	<title>Your Fridge</title>
+	<link href="/css/style.css" rel="stylesheet">
+	<link href="/bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+	<script src="/bower_components/bootstrap/dist/js/bootstrap.js"></script>
+	<script src="/bower_components/jquery/dist/jquery.js"></script>
+	</head>
+	<body>
+		<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+		  <a class="navbar-brand" href="/">UnchewedFood</a>
+		  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
+		    <span class="navbar-toggler-icon"></span>
+		  </button>
+
+		  <div class="collapse navbar-collapse" id="navbarsExample04">
+		    <ul class="navbar-nav mr-auto">
+		      <li class="nav-item">
+		        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+		      </li>
+		      <%if (typeof user!='undefined'){%>
+		      	<li class ="nav-item active"><a class="nav-link" href="/users/fridge">Your Fridge</a></li>
+		      <%}%>
+		  	</ul>
+		  	<ul class="navbar-nav navbar-right">
+		      <%if (typeof user != 'undefined'){%>
+		      	<li class="nav-item">
+		      	<a class = "nav-link" href="/users/logout">Logout</a></li>
+		      <%}else{%>
+		      <li class="nav-item">
+		        <a class="nav-link " href="/users/register">Register</a>
+		      </li>
+		     <li class="nav-item">
+		        <a class="nav-link" href="/users/login">Login</a>
+		      </li>
+		      <%}%>
+		    </ul>
+		  </div>
+		</nav>
+		<div class="container">
+		<h1>Your Fridge</h1>
+		<a href="/users/fridge/add" class="btn btn-primary">New Food</a>
+		<br>
+		<h3>Expired:</h3>
+		<ul>
+			<%fridge.foods.forEach(function(food){%>
+			<%if ((food.expiration.getFullYear()<date.getFullYear())||(food.expiration.getFullYear()==date.getFullYear()&&food.expiration.getMonth()<date.getMonth())||(food.expiration.getFullYear()==date.getFullYear()&&food.expiration.getMonth()==date.getMonth()&&food.expiration.getDate()<date.getDate())){%>
+			<li class="list-group-item bg-danger">
+				<form method="POST", action=<%="/users/fridge/delete?id="+food._id%>>
+				<h4>Date: <%=food.expiration.getMonth()+1 + "/"+food.expiration.getDate()+"/"+food.expiration.getFullYear()%></h2>
+				<h4>Food: <%=food.food%></h2>
+				<input type="submit" value="Delete" class="btn btn-warning">
+			</li>
+			<%}%>
+		<%})%>
+  		</ul>
+  		<h3>Close to Expire:</h3>
+		<ul>
+			<%fridge.foods.forEach(function(food){%>
+			<%if(!((food.expiration.getFullYear()<date.getFullYear())||(food.expiration.getFullYear()==date.getFullYear()&&food.expiration.getMonth()<date.getMonth())||(food.expiration.getFullYear()==date.getFullYear()&&food.expiration.getMonth()==date.getMonth()&&food.expiration.getDate()<date.getDate()))&&(Date.parse(new Date(date.getFullYear(), date.getMonth(), date.getDate() + 7))>Date.parse(food.expiration))){%>
+			<li class="list-group-item bg-warning">
+				<form method="POST", action=<%="/users/fridge/delete?id="+food._id%>>
+				<h4>Date: <%=food.expiration.getMonth()+1 + "/"+food.expiration.getDate()+"/"+food.expiration.getFullYear()%></h2>
+				<h4>Food: <%=food.food%></h2>
+				<input type="submit" value="Delete" class="btn btn-danger">
+			</li>
+			<%}%>
+		<%})%>
+  		</ul>
+  		<h3>Fresh:</h3>
+		<ul>
+			<%fridge.foods.forEach(function(food){%>
+			<%if(!((food.expiration.getFullYear()<date.getFullYear())||(food.expiration.getFullYear()==date.getFullYear()&&food.expiration.getMonth()<date.getMonth())||(food.expiration.getFullYear()==date.getFullYear()&&food.expiration.getMonth()==date.getMonth()&&food.expiration.getDate()<date.getDate()))&&!(Date.parse(new Date(date.getFullYear(), date.getMonth(), date.getDate() + 7))>Date.parse(food.expiration))){%>
+			<li class="list-group-item bg-success">
+				<form method="POST", action=<%="/users/fridge/delete?id="+food._id%>>
+				<h4>Date: <%=food.expiration.getMonth()+1 + "/"+food.expiration.getDate()+"/"+food.expiration.getFullYear()%></h2>
+				<h4>Food: <%=food.food%></h2>
+				<input type="submit" value="Delete" class="btn btn-danger">
+			</li>
+			<%}%>
+		<%})%>
+  		</ul>
+		</div>
+</body>
+</html>
