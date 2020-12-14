@@ -1,4 +1,4 @@
 module.exports = {
-	database:'mongodb://localhost:27017/escapevape',
+	database:'mongodb://localhost:27017/unchewedfood',
 	secret: 'yoursecret'
 }

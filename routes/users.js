@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const passport = require('passport');
 
  let User = require('../models/user');
-
+ let Fridge = require('../models/fridge');
  router.get('/register', function(req, res){
  	res.render('register');
  });
@@ -34,32 +34,70 @@ router.post('/register', function(req, res){
 			email:email,
 			password:password
 		});
-
-
-		bcrypt.genSalt(10, function(err, salt){
+		var d1, d2;
+		User.exists({username:newUser.username}, function(err, user){
 			if(err){
 				console.log(err);
+				return;
 			}
 			else{
-			bcrypt.hash(newUser.password, salt, function(err, hash){
-				if(err){
-					console.log(err);
+				if(user){
+					req.flash('danger', 'Account with this username already exists')
+					res.redirect('/users/register');
 				}
-				newUser.password = hash;
-				newUser.save(function(){
-					if(err){
-						console.log(err);
-						return;
-					} else{
-						req.flash('success', 'You are now registered and can log in.');
-						res.redirect('/users/login');
-					}
-				});
-			});
+				else{
+					User.exists({email:newUser.email}, function(err, user){
+						if(err){
+							console.log(err);
+							return;
+						}
+						else{
+							if(user){
+								req.flash('danger', 'Account with this email already exists');
+								res.redirect('/users/register');
+							}
+							else{
+								bcrypt.genSalt(10, function(err, salt){
+									if(err){
+										console.log(err);
+									}
+									else{
+									bcrypt.hash(newUser.password, salt, function(err, hash){
+										if(err){
+											console.log(err);
+										}
+										newUser.password = hash;
+										newUser.save(function(){
+											if(err){
+												console.log(err);
+												return;
+											} else{
+												 let newFridge = new Fridge({
+												 	user_id: newUser._id,
+												 	foods: [],
+												 });
+												newFridge.save(function(){
+												 	if(err){
+												 		console.log(err);
+												 		return;
+												 	}
+												 	else{
+														req.flash('success', 'You are now registered and can log in.');
+														res.redirect('/users/login');
+													 }
+												 });
+											}
+										});
+									});
+									}
+								});
+							}
+						}
+					});
+				}
 			}
-		});
+		});		
 	}
-
 });
 
 //login form
@@ -74,7 +112,76 @@ router.post('/login', function(req, res, next){
     failureFlash: true
   })(req, res, next);
 });
-
+router.get('/fridge', ensureAuthenticated, function(req, res){
+	Fridge.findOne({user_id: req.user._id}, function(err, fridge){
+		if(err){
+			req.flash('danger', 'Something went wrong')
+			res.redirect('/');
+			console.log(err);
+			return;
+		}
+		else{
+			res.render('fridge', {fridge:fridge, date: new Date()});
+		}
+	});
+});
+router.get('/fridge/add', ensureAuthenticated, function(req, res){
+	res.render('addfood');
+});
+router.post('/fridge/delete', ensureAuthenticated, function(req, res){
+	Fridge.findOne({user_id: req.user._id}, function(err, fridge){
+		if(err){
+			req.flash('danger', 'Something went wrong')
+			res.redirect('/');
+			console.log(err);
+			return;
+		}
+		else{
+			fridge.foods = fridge.foods.filter((food) => food._id!=req.query.id);
+			console.log(req.query.id);
+			console.log(fridge.foods);
+			Fridge.update({user_id:req.user._id}, fridge, function(err){
+				if(err){
+					console.log(err);
+					return;
+				} else{
+					res.redirect('/users/fridge');
+				}
+			});
+		}
+	});
+});
+router.post('/fridge/add', ensureAuthenticated, function(req, res){
+	Fridge.findOne({user_id: req.user._id}, function(err, fridge){
+		if(err){
+			req.flash('danger', 'Something went wrong')
+			res.redirect('/');
+			console.log(err);
+			return;
+		}
+		else{
+			let item = {food:req.body.food, expiration:req.body.expiration};
+			fridge.foods.push(item);
+			Fridge.update({user_id:req.user._id}, fridge, function(err){
+				if(err){
+					console.log(err);
+					return;
+				} else{
+					res.redirect('/users/fridge');
+				}
+			});
+		}
+	});
+});
+// Access Control
+function ensureAuthenticated(req, res, next){
+  if(req.isAuthenticated()){
+    return next();
+  } else {
+    req.flash('danger', 'Please login');
+    res.redirect('/users/login');
+  }
+}
 //logout process
 router.get('/logout', function(req, res){
 	req.logout();
