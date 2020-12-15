@@ -40,13 +40,19 @@
 		  </div>
 		</nav>
 		<div class="container">
+			<%- messages('message', locals) %>
+		<% if(typeof errors != 'undefined'){%>
+			<% errors.forEach(function (i) { %>
+		    <div class="alert alert-danger"><%= i.msg %></div>
+		  	<% }) %>
+		<%}%>
 		<h1>Your Fridge</h1>
 		<a href="/users/fridge/add" class="btn btn-primary">New Food</a>
 		<br>
 		<h3>Expired:</h3>
 			<%fridge.foods.forEach(function(food){%>
 			<%if ((food.expiration.getFullYear()<date.getFullYear())||(food.expiration.getFullYear()==date.getFullYear()&&food.expiration.getMonth()<date.getMonth())||(food.expiration.getFullYear()==date.getFullYear()&&food.expiration.getMonth()==date.getMonth()&&food.expiration.getDate()<date.getDate())){%>
-			<div class="text-wrap bg-danger rounded p-3">
+			<div class="d-inline-flex m-1 text-wrap bg-danger rounded p-3">
 				<form method="POST", action=<%="/users/fridge/delete?id="+food._id%>>
 				<h4 class="">Date: <%=food.expiration.getMonth()+1 + "/"+food.expiration.getDate()+"/"+food.expiration.getFullYear()%></h4>
 				<h4 class="">Food: <%=food.food%></h4>
@@ -58,7 +64,7 @@
   		<h3>Close to Expire:</h3>
 			<%fridge.foods.forEach(function(food){%>
 			<%if(!((food.expiration.getFullYear()<date.getFullYear())||(food.expiration.getFullYear()==date.getFullYear()&&food.expiration.getMonth()<date.getMonth())||(food.expiration.getFullYear()==date.getFullYear()&&food.expiration.getMonth()==date.getMonth()&&food.expiration.getDate()<date.getDate()))&&(Date.parse(new Date(date.getFullYear(), date.getMonth(), date.getDate() + 7))>Date.parse(food.expiration))){%>
-			<div class="text-wrap bg-warning rounded p-3">
+			<div class="d-inline-flex m-1 text-wrap bg-warning rounded p-3">
 				<form method="POST", action=<%="/users/fridge/delete?id="+food._id%>>
 				<h4 class="">Date: <%=food.expiration.getMonth()+1 + "/"+food.expiration.getDate()+"/"+food.expiration.getFullYear()%></h4>
 				<h4 class="">Food: <%=food.food%></h4>
@@ -70,7 +76,7 @@
   		<h3>Fresh:</h3>
 			<%fridge.foods.forEach(function(food){%>
 			<%if(!((food.expiration.getFullYear()<date.getFullYear())||(food.expiration.getFullYear()==date.getFullYear()&&food.expiration.getMonth()<date.getMonth())||(food.expiration.getFullYear()==date.getFullYear()&&food.expiration.getMonth()==date.getMonth()&&food.expiration.getDate()<date.getDate()))&&!(Date.parse(new Date(date.getFullYear(), date.getMonth(), date.getDate() + 7))>Date.parse(food.expiration))){%>
-			<div class="text-wrap bg-success rounded p-3">
+			<div class="d-inline-flex m-1 text-wrap bg-success rounded p-3">
 				<form method="POST", action=<%="/users/fridge/delete?id="+food._id%>>
 				<h4 class="">Date: <%=food.expiration.getMonth()+1 + "/"+food.expiration.getDate()+"/"+food.expiration.getFullYear()%></h4>
 				<h4 class="">Food: <%=food.food%></h4>
