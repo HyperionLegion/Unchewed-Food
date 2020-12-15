@@ -150,7 +150,7 @@ router.post('/fridge/delete', ensureAuthenticated, function(req, res){
 	});
 });
 router.post('/fridge/add', ensureAuthenticated, function(req, res){
-	
+	console.log(req.body.expiration)
 	Fridge.findOne({user_id: req.user._id}, function(err, fridge){
 		if(err){
 			req.flash('danger', 'Something went wrong')
@@ -165,11 +165,15 @@ router.post('/fridge/add', ensureAuthenticated, function(req, res){
 	let errors = req.validationErrors();
 
 	if(errors){
-		if(req.body.expiration!=undefined)
-			errors.push({'msg':'Expiration must be a date.'})
-		res.render('fridge', {fridge: fridge, errors:errors});
+		res.render('fridge', {fridge: fridge, errors:errors, date: new Date()});
 	}
-	else{		let item = {food:req.body.food, expiration:req.body.expiration};
+	else{
+	if(req.body.expiration==undefined){
+			errors.push({'msg':'Expiration must be a date.'})
+			res.render('fridge', {fridge: fridge, errors:errors, date: new Date()});
+		}
+		else{		
+		let item = {food:req.body.food, expiration:req.body.expiration};
 			fridge.foods.push(item);
 			Fridge.update({user_id:req.user._id}, fridge, function(err){
 				if(err){
@@ -180,6 +184,7 @@ router.post('/fridge/add', ensureAuthenticated, function(req, res){
 				}
 			});
 		}
+	}
 	}
 	});
 });

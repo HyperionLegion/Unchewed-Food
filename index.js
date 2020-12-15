@@ -88,14 +88,15 @@ app.set( 'port' , process.env.PORT || 8080 ) ;
 app.get('/', function(req, res){
   res.render('index')
 });
-app.get('*', function(req, res){
-  req.flash('danger', 'Not a valid URL');
-  res.status(404).redirect('/');
-});
+
 
 let users = require('./routes/users');
 app.use('/users', users);
 
+app.get('*', function(req, res){
+  req.flash('danger', 'Not a valid URL');
+  res.status(404).redirect('/');
+});
 //port
 var listener = app . listen( app.get( 'port' )  , function() {   
 
