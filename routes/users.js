@@ -150,7 +150,6 @@ router.post('/fridge/delete', ensureAuthenticated, function(req, res){
 	});
 });
 router.post('/fridge/add', ensureAuthenticated, function(req, res){
-	console.log(req.body.expiration)
 	Fridge.findOne({user_id: req.user._id}, function(err, fridge){
 		if(err){
 			req.flash('danger', 'Something went wrong')
