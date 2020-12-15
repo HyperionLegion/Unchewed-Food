@@ -138,8 +138,6 @@ router.post('/fridge/delete', ensureAuthenticated, function(req, res){
 		}
 		else{
 			fridge.foods = fridge.foods.filter((food) => food._id!=req.query.id);
-			console.log(req.query.id);
-			console.log(fridge.foods);
 			Fridge.update({user_id:req.user._id}, fridge, function(err){
 				if(err){
 					console.log(err);
@@ -152,6 +150,7 @@ router.post('/fridge/delete', ensureAuthenticated, function(req, res){
 	});
 });
 router.post('/fridge/add', ensureAuthenticated, function(req, res){
+	
 	Fridge.findOne({user_id: req.user._id}, function(err, fridge){
 		if(err){
 			req.flash('danger', 'Something went wrong')
@@ -160,7 +159,17 @@ router.post('/fridge/add', ensureAuthenticated, function(req, res){
 			return;
 		}
 		else{
-			let item = {food:req.body.food, expiration:req.body.expiration};
+			req.checkBody('food', 'Food name is required.').notEmpty();
+	req.checkBody('expiration', 'Expiration date is required.').notEmpty();
+
+	let errors = req.validationErrors();
+
+	if(errors){
+		if(req.body.expiration!=undefined)
+			errors.push({'msg':'Expiration must be a date.'})
+		res.render('fridge', {fridge: fridge, errors:errors});
+	}
+	else{		let item = {food:req.body.food, expiration:req.body.expiration};
 			fridge.foods.push(item);
 			Fridge.update({user_id:req.user._id}, fridge, function(err){
 				if(err){
@@ -171,6 +180,7 @@ router.post('/fridge/add', ensureAuthenticated, function(req, res){
 				}
 			});
 		}
+	}
 	});
 });
 // Access Control

@@ -88,13 +88,9 @@ app.set( 'port' , process.env.PORT || 8080 ) ;
 app.get('/', function(req, res){
   res.render('index')
 });
-app.get('/:page', function(req, res){
-
-    var info = {
-        page : req.params.page
-    };
-
-    res.send("Not valid URL for this site")
+app.get('*', function(req, res){
+  req.flash('danger', 'Not a valid URL');
+  res.status(404).redirect('/');
 });
 
 let users = require('./routes/users');
