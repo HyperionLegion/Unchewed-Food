@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-	<title>Your Fridge</title>
+	<title>Your Recipes</title>
 	<link href="/css/style.css" rel="stylesheet">
 	<link href="/bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
 	<script src="/bower_components/bootstrap/dist/js/bootstrap.js"></script>
@@ -21,8 +21,8 @@
 		        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
 		      </li>
 		      <%if (typeof user!='undefined'){%>
-		      	<li class ="nav-item active"><a class="nav-link" href="/users/fridge">Your Fridge</a></li>
-		      	<li class ="nav-item"><a class="nav-link" href="/users/recipe">Your Recipes</a></li>
+		      	<li class ="nav-item"><a class="nav-link" href="/users/fridge">Your Fridge</a></li>
+		      	<li class ="nav-item active"><a class="nav-link" href="/users/recipe">Your Recipes</a></li>
 		      <%}%>
 		  	</ul>
 		  	<ul class="navbar-nav navbar-right">
@@ -47,7 +47,7 @@
 		    <div class="alert alert-danger"><%= i.msg %></div>
 		  	<% }) %>
 		<%}%>
-		<h1>Your Recipe</h1>
+		<h1>Your Recipes</h1>
 		<ul>
 			<li class="list-group-item">
 				<h2>Peanut butter & jam flapjacks</h2>
