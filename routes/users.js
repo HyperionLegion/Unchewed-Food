@@ -112,6 +112,9 @@ router.post('/login', function(req, res, next){
     failureFlash: true
   })(req, res, next);
 });
+router.get('/recipe', ensureAuthenticated, function(req, res){
+	res.render('recipe');
+});
 router.get('/fridge', ensureAuthenticated, function(req, res){
 	Fridge.findOne({user_id: req.user._id}, function(err, fridge){
 		if(err){
